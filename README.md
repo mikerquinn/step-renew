@@ -17,7 +17,7 @@
 The **step-renew** utility renews an X.509 certificate issued by a step-ca server.
 It authenticates to the CA using mutual TLS (mTLS) with the existing client certificate and key, posts a renewal request to the `/1.0/renew` endpoint, and atomically overwrites the certificate file with the full chain returned by the server.
 
-This tool is intended for automated certificate renewal in scripts, cron jobs, or systemd timers where short-lived certificates from step-ca are in use.
+This tool is intended for automated certificate renewal in scripts, cron jobs, or systemd timers where short-lived certificates from step-ca are in use.  It was created as a minimal replacement for the `step` cli tool in constrained environments where a large executable like that is just too big (OpenWRT routers with limited flash storage and such).
 
 The client certificate file is both the authentication credential and the target for the renewed chain (leaf certificate followed by any intermediates or CA).
 
