@@ -58,6 +58,7 @@ step-renew -ca /etc/ssl/ca.crt \
            -cert /etc/ssl/cert.pem \
            -key /etc/ssl/key.pem \
            -server step-ca.example.com
+```
 ## EXIT STATUS
 
 The utility exits with status 0 on successful renewal.
