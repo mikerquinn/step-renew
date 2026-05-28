@@ -58,3 +58,78 @@ step-renew -ca /etc/ssl/ca.crt \
            -cert /etc/ssl/cert.pem \
            -key /etc/ssl/key.pem \
            -server step-ca.example.com
+## EXIT STATUS
+
+The utility exits with status 0 on successful renewal.
+Any error (missing required flags, I/O failure, TLS handshake failure, empty response from server, etc.) results in a non-zero exit status.
+
+## SEE ALSO
+
+step-ca(8), step(1)
+
+## AUTHORS
+
+Written by mikerquinn.
+
+## BUILDING
+
+step-renew is a single-file Go program with no external dependencies and no cgo, making cross-compilation straightforward.
+
+### Native build (development machine)
+
+```sh
+go build -o step-renew main.go
+```
+
+Install system-wide:
+
+```sh
+go build -o /usr/local/bin/step-renew main.go
+```
+
+Run directly (for testing):
+
+```sh
+go run main.go -ca ... -cert ... -key ... -server ...
+```
+
+### Cross-compiling for embedded / non-x86 systems
+
+Most deployments are on embedded devices that lack a Go toolchain. Build on your development machine (x86_64 or arm64) and copy the resulting static binary to the target.
+
+**Recommended flags** (fully static binary, stripped):
+
+```sh
+CGO_ENABLED=0 GOOS=linux GOARCH=<arch> go build -ldflags="-s -w" -o step-renew main.go
+```
+
+Common architectures:
+
+- **arm64** (Raspberry Pi 4/5, most modern embedded boards):
+
+  ```sh
+  CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o step-renew main.go
+  ```
+
+- **arm** (32-bit ARM, older Raspberry Pi, many IoT/embedded devices):
+
+  ```sh
+  CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags="-s -w" -o step-renew main.go
+  ```
+
+- Other frequent embedded targets (replace `GOARCH`):
+
+  ```sh
+  CGO_ENABLED=0 GOOS=linux GOARCH=mips     go build ...
+  CGO_ENABLED=0 GOOS=linux GOARCH=riscv64  go build ...
+  CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le  go build ...
+  CGO_ENABLED=0 GOOS=linux GOARCH=s390x    go build ...
+  ```
+
+Transfer the binary to the device (scp, etc.) and make executable:
+
+```sh
+chmod +x step-renew
+```
+
+The binary has no runtime dependencies and will run on any most any system that matches the target architecture.
